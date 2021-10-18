@@ -29,7 +29,7 @@ podTemplate(yaml: '''
         persistentVolumeClaim: 
           claimName: jenkins-pv-claim 
       - name: kaniko-secret 
-	    secret: 
+        secret: 
             secretName: dockercred 
             items: 
             - key: .dockerconfigjson 
