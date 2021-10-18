@@ -5,7 +5,7 @@ metadata:
   labels:
     app: calculator
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: calculator
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: calculator
-        image: leszko/calculator:{{VERSION}}
+        image: leszko/calculator
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
