@@ -39,11 +39,13 @@ podTemplate(yaml: '''
       stage('Build a gradle project') { 
         git 'https://github.com/dlambrig/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git' 
         container('gradle') { 
-          stage('Build a gradle project') { 
-            sh ''' 
+          stage('Build a gradle project') {
+            dir('Chapter08/sample1') { 
+            sh ''' chmod +x ./gradlew
               ./gradlew build 
               mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt 
               ''' 
+          }
         } 
       } 
     } 
