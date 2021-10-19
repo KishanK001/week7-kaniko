@@ -37,7 +37,10 @@ podTemplate(yaml: '''
  ''')
 pipeline {
   agent { 
-    node(POD_LABEL) } { 
+    node(POD_LABEL)
+    triggers {
+    githubPush()
+  } } { 
       stage('Build a gradle project') { 
         git 'https://github.com/KishanK001/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git' 
         container('gradle') { 
