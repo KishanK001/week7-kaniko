@@ -58,7 +58,8 @@ podTemplate(yaml: '''
             echo 'FROM openjdk:8-jre' > Dockerfile 
             echo 'COPY /mnt/calculator-0.0.1-SNAPSHOT.jar app.jar' >> Dockerfile 
             echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile 
-            mv /mnt/calculator-0.0.1-SNAPSHOT.jar app.jar 
+            mv ./calculator-0.0.1-SNAPSHOT.jar app.jar 
+            ls
             /kaniko/executor --context `pwd` --destination kishank007/hello-kaniko:1.0 
             '''
           }
