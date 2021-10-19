@@ -34,8 +34,10 @@ podTemplate(yaml: '''
             items: 
             - key: .dockerconfigjson 
               path: config.json
- ''') { 
-    node(POD_LABEL) { 
+ ''')
+pipeline {
+  agent { 
+    node(POD_LABEL) } { 
       stage('Build a gradle project') { 
         git 'https://github.com/KishanK001/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git' 
         container('gradle') { 
