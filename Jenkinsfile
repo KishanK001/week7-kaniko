@@ -41,14 +41,14 @@ pipeline {
   }
     stages {
       stage('Build a gradle project') { 
-        git 'https://github.com/KishanK001/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git' 
+        steps {git 'https://github.com/KishanK001/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'} 
         container('gradle') { 
           stage('Build a gradle project') {
-            dir('Chapter08/sample1') { 
+            steps { dir('Chapter08/sample1') { 
             sh ''' chmod +x ./gradlew
               ./gradlew build 
               mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt 
-              ''' 
+              ''' }
           }
         } 
       } 
