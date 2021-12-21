@@ -1,7 +1,7 @@
 pipeline {
   agent {
     kubernetes {
-      yaml  ''' 
+      yaml ''' 
     apiVersion: v1 
     kind: Pod 
     spec: 
@@ -39,6 +39,7 @@ pipeline {
               path: config.json
  ''' }
     }
+    stages {
       stage('Build a gradle project') { 
         git 'https://github.com/KishanK001/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git' 
         container('gradle') { 
@@ -68,5 +69,5 @@ pipeline {
         }
       }
     }
-
+ }
 
