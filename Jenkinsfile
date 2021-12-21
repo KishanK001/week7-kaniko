@@ -34,13 +34,9 @@ podTemplate(yaml: '''
             items: 
             - key: .dockerconfigjson 
               path: config.json
- ''')
-pipeline {
-  agent { 
+ ''') {
     node(POD_LABEL)
-    triggers {
-    githubPush()
-  } } { 
+     { 
       stage('Build a gradle project') { 
         git 'https://github.com/KishanK001/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git' 
         container('gradle') { 
@@ -64,7 +60,7 @@ pipeline {
             echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile 
             mv /mnt/calculator-0.0.1-SNAPSHOT.jar . 
             ls
-            /kaniko/executor --context `pwd` --destination kishank007/hello-kaniko:1.0 
+            /kaniko/executor --context `pwd` --destination kishank007/hello-kaniko:1.2 
             '''
           }
         }
