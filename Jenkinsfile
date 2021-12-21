@@ -50,13 +50,13 @@ pipeline {
             sh ''' chmod +x ./gradlew
               ./gradlew build 
               mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt 
-              ''' }
+              '''
+            }
           }
-        } 
  
       stage('Build Java Image') { 
+        steps {
         container('kaniko') { 
-          stage('Build a gradle project') { 
             sh ''' 
             echo 'FROM openjdk:8-jre' > Dockerfile 
             echo 'COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar' >> Dockerfile 
