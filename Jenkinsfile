@@ -1,89 +1,19 @@
 pipeline {
-
-agent none
-
-stages {
-
-        stage('feature') {
-
-            when { 
-
-              expression {
-
-                return env.GIT_BRANCH == "origin/feature"
-
-              }
-
-            }
-
-            agent {
-
-              kubernetes {
-
-                yaml '''
-
-                spec:
-
-                  containers:
-
-                  - name: centos
-
-                  image: centos
-
-                '''
-
-              }
-
-            }   
-
-            steps { 
-
-               echo "I am a feature branch2"
-
-            }
-
-        }
-
-        stage('main') {
-
-            when {
-
-              expression {
-
-                return env.GIT_BRANCH == "origin/main"
-
-              }
-
-            } 
-
-            agent {
-
-                kubernetes {
-
-                yaml '''
-
-                spec:
-
-                  containers:
-
-                  - name: centos
-
-                  image: centos
-
-                '''
-
-              }
-
-            }              
-
-            steps { 
-
-               echo "I am a main branch"
-
-            }
-
-        }
-
+  agent any
+  stages {
+    stage('Build Code') {
+      steps {
+        sh """
+        echo "Building  Artifacts"
+        """
+      }
     }
-
+    stage('Deploy Code') {
+      steps {
+        sh """
+        echo "Deploying Code"
+        """
+      }
+    }
+  }
 }
