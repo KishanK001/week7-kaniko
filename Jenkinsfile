@@ -1,4 +1,7 @@
-podTemplate(yaml: ''' 
+pipeline {
+  agent {
+    kubernetes {
+    yaml ''' 
     apiVersion: v1 
     kind: Pod 
     spec: 
@@ -34,9 +37,9 @@ podTemplate(yaml: '''
             items: 
             - key: .dockerconfigjson 
               path: config.json
- ''') {
-    node(POD_LABEL)
-     { 
+ ''' }
+  }
+    stages {
       stage('Build a gradle project') { 
         git 'https://github.com/KishanK001/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git' 
         container('gradle') { 
