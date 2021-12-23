@@ -7,6 +7,7 @@ pipeline {
         echo 'Hello Maven'
         sh 'mvn --version'
       }
+    }
     stage('Example test') {
       agent { docker 'openjdk:8-jre' }
       steps {
