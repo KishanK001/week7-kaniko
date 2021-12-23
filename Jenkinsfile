@@ -51,7 +51,7 @@ pipeline {
         container('gradle') {
           sh 'ls -la'
           sh 'gradle wrapper'
-          sh 'chmod +x ./gradlew
+          sh 'chmod +x ./gradlew'
           sh './gradlew test' 
 #          dir('Chapter08/sample1') { 
 #            sh ''' chmod +x ./gradlew
