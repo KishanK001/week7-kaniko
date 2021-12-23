@@ -40,16 +40,25 @@ pipeline {
  ''' }
     }
     stages {
-      stage('Build a gradle project') { 
+      stage('Run pipeline') { 
+        when {
+          anyOf {
+            branch 'main'
+            branch 'feature'
+          }
+        }
         steps { 
-        git 'https://github.com/KishanK001/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
-        container('gradle') { 
-          dir('Chapter08/sample1') { 
-            sh ''' chmod +x ./gradlew
-              ./gradlew build 
-              mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt 
-              ''' 
-            }
+        container('gradle') {
+          sh 'ls -la'
+          sh 'gradle wrapper'
+          sh 'chmod +x ./gradlew
+          sh './gradlew test' 
+#          dir('Chapter08/sample1') { 
+#            sh ''' chmod +x ./gradlew
+#              ./gradlew build 
+#              mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt 
+#              ''' 
+#            }
           }
         } 
       }
