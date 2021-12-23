@@ -125,8 +125,7 @@ pipeline {
         // container name is repository/image:version
         when {
           expression {
-            flag == true &&
-            return env.GIT_BRANCH == 'main'
+            flag == true && return env.GIT_BRANCH == 'main'
           }
         }
         steps {
