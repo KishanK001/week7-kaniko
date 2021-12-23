@@ -1,3 +1,4 @@
+def flag = false
 pipeline {
   agent {
     kubernetes {
@@ -40,32 +41,117 @@ pipeline {
  ''' }
     }
     stages {
-      stage('Build a gradle project') { 
+      stage('Run Test') { 
+        when {
+          anyOf {
+            branch 'main'
+            branch 'feature'
+          }
+        }
         steps { 
-        git 'https://github.com/KishanK001/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
-        container('gradle') { 
-          dir('Chapter08/sample1') { 
-            sh ''' chmod +x ./gradlew
-              ./gradlew build 
-              mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt 
-              ''' 
-            }
+        container('gradle') {
+          sh 'ls -la'
+          sh 'gradle wrapper'
+          sh 'chmod +x ./gradlew'
+          sh './gradlew test' 
           }
         } 
       }
-      stage('Build Java Image') { 
+      stage('Checkstyle Test') {
+        when {
+          expression {
+            return env.BRANCH_NAME == 'main'
+            return env.BRANCH_NAME == 'feature'
+          }
+        }
         steps {
-          container('kaniko') { 
-              sh ''' 
-              echo 'FROM openjdk:8-jre' > Dockerfile 
-              echo 'COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar' >> Dockerfile 
-              echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile 
-              mv /mnt/calculator-0.0.1-SNAPSHOT.jar . 
-              ls
-              /kaniko/executor --context `pwd` --destination kishank007/hello-kaniko:1.2 
-              '''
+          container('gradle') {
+          sh './gradlew checkstyleMain'
+          }
+        }
+        post {
+          success {
+            // pubish html
+            publishHTML (target: [
+              alwaysLinkToLastBuild: true,
+              reportDir: 'build/reports/checkstyle/',
+              reportFiles: 'main.html',
+              reportName: 'CheckStyle Report'
+            ])
+          }
+        }
+      } 
+      stage('Code Coverage Test') {
+        when {
+          branch 'main'
+        }
+        steps {
+          container('gradle') {
+            sh './gradlew jacocoTestCoverageVerification'
+            sh './gradlew jacocoTestReport'
+          }
+        }
+        post {
+          success {
+            // publish report
+            publishHTML (target: [
+              reportDir: 'build/reports/jacoco/test/html',
+              reportFiles: 'index.html',
+              reportName: 'JaCoCo Coverage Report'
+            ])
           }
         }
       }
+      stage('build a gradle project') {
+        when {
+          not {
+            branch 'playground'
+          }
+        }
+        steps {
+          container('gradle') {
+            sh './gradlew build'
+            sh 'mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt'
+          }
+          script { flag = true }
+        }
+      }
+      stage('Build Release Java Image') {
+        // container name is repository/image:version
+        when {
+          expression {
+          flag == true && env.GIT_BRANCH == 'main'
+          }
+        }
+        steps {
+          container('kaniko') {
+            sh '''
+              echo 'FROM openjdk:8-jre' > Dockerfile
+              echo 'COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar' >> Dockerfile
+              echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile
+              mv /mnt/calculator-0.0.1-SNAPSHOT.jar .
+              /kaniko/executor --context $(pwd) --destination kishank007/calculator:1.0
+            '''
+          }
+        }
+      }
+      stage('Build Feature Java Image') {
+        when {
+          expression {
+          flag == true && env.GIT_BRANCH == 'feature'
+          }
+        }
+        steps {
+          container('kaniko') {
+            sh '''
+              echo 'FROM openjdk:8-jre' > Dockerfile
+              echo 'COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar' >> Dockerfile
+              echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile
+              mv /mnt/calculator-0.0.1-SNAPSHOT.jar .
+              /kaniko/executor --context $(pwd) --destination kishank007/calculator-feature:1.0
+            '''
+          }
+        }
+      } 
     }
-  }
+  }      
