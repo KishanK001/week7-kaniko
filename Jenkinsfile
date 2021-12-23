@@ -121,6 +121,7 @@ pipeline {
         when {
           expression {
           flag == true && env.GIT_BRANCH == 'main'
+          }
         }
         steps {
           container('kaniko') {
