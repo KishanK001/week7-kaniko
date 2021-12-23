@@ -53,12 +53,6 @@ pipeline {
           sh 'gradle wrapper'
           sh 'chmod +x ./gradlew'
           sh './gradlew test' 
-#          dir('Chapter08/sample1') { 
-#            sh ''' chmod +x ./gradlew
-#              ./gradlew build 
-#              mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt 
-#              ''' 
-#            }
           }
         } 
       }
