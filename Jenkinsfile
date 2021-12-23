@@ -143,6 +143,7 @@ pipeline {
               echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile
               mv /mnt/calculator-0.0.1-SNAPSHOT.jar .
               /kaniko/executor --context $(pwd) --destination kishank007/calculator-feature:1.0
+            '''
           }
         }
       } 
