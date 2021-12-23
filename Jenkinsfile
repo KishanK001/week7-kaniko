@@ -73,7 +73,6 @@ pipeline {
             // pubish html
             publishHTML (target: [
               alwaysLinkToLastBuild: true,
-              reportDir: 'build/reports/checkStyle/',
               reportFiles: 'main.html',
               reportName: 'CheckStyle Report'
             ])
@@ -94,7 +93,6 @@ pipeline {
           success {
             // publish report
             publishHTML (target: [
-              reportDir: 'build/reports/jacoco/test/html',
               reportFiles: 'index.html',
               reportName: 'JaCoCo Coverage Report'
             ])
