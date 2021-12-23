@@ -56,19 +56,18 @@ pipeline {
           }
         } 
       }
-      stage('Build Java Image') { 
-        steps {
-          container('kaniko') { 
-              sh ''' 
-              echo 'FROM openjdk:8-jre' > Dockerfile 
-              echo 'COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar' >> Dockerfile 
-              echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile 
-              mv /mnt/calculator-0.0.1-SNAPSHOT.jar . 
-              ls
-              /kaniko/executor --context `pwd` --destination kishank007/hello-kaniko:1.2 
-              '''
+      stage('Checkstyle Test') {
+        when {
+          expression {
+            return env.BRANCH_NAME == 'main'
+            return env.BRANCH_NAME == 'feature'
           }
         }
-      }
+        steps {
+          container('gradle') {
+          sh './gradlew checkstyleMain'
+          }
+        }
+      } 
     }
-  }
+  }      
