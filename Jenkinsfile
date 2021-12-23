@@ -54,7 +54,6 @@ pipeline {
           }
         } 
       } 
-    } 
  
       stage('Build Java Image') { 
         container('kaniko') { 
@@ -72,5 +71,5 @@ pipeline {
         }
       }
     }
- }
-}
+  }
+} 
