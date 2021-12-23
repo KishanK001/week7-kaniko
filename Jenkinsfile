@@ -41,10 +41,9 @@ pipeline {
     }
     stages {
       stage('Build a gradle project') { 
-        steps { git 'https://github.com/KishanK001/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git' }
+        steps { 
+        git 'https://github.com/KishanK001/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
         container('gradle') { 
-          stage('Build a gradle project') {
-            steps {
             dir('Chapter08/sample1') 
             sh ''' chmod +x ./gradlew
               ./gradlew build 
@@ -53,12 +52,10 @@ pipeline {
             }
           }
         } 
-      } 
  
       stage('Build Java Image') { 
-        container('kaniko') { 
-          stage('Build a gradle project') { 
-            steps {
+        steps {
+          container('kaniko') { 
               sh ''' 
               echo 'FROM openjdk:8-jre' > Dockerfile 
               echo 'COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar' >> Dockerfile 
@@ -72,4 +69,3 @@ pipeline {
       }
     }
   }
-} 
