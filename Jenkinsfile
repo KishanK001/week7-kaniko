@@ -137,7 +137,9 @@ pipeline {
       }
       stage('Build Feature Java Image') {
         when {
-          branch 'feature'
+          expression {
+          flag == true && env.GIT_BRANCH == 'feature'
+          }
         }
         steps {
           container('kaniko') {
