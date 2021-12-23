@@ -40,7 +40,7 @@ pipeline {
  ''' }
     }
     stages {
-      stage('Run pipeline') { 
+      stage('Run Test') { 
         when {
           anyOf {
             branch 'main'
@@ -68,6 +68,38 @@ pipeline {
           sh './gradlew checkstyleMain'
           }
         }
+        post {
+          success {
+            // pubish html
+            publishHTML (target: [
+              alwaysLinkToLastBuild: true,
+              reportDir: 'build/reports/checkStyle/',
+              reportFiles: 'main.html',
+              reportName: 'CheckStyle Report'
+            ])
+          }
+        }
       } 
+      stage('Code Coverage Test') {
+        when {
+          branch 'main'
+        }
+        steps {
+          container('gradle') {
+            sh './gradlew jacocoTestCoverageVerification'
+            sh './gradlew jacocoTestReport'
+          }
+        }
+        post {
+          success {
+            // publish report
+            publishHTML (target: [
+              reportDir: 'build/reports/jacoco/test/html',
+              reportFiles: 'index.html',
+              reportName: 'JaCoCo Coverage Report'
+            ])
+          }
+        }
+      }
     }
   }      
