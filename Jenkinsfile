@@ -1,3 +1,4 @@
+def flag = false
 pipeline {
   agent {
     kubernetes {
@@ -112,13 +113,14 @@ pipeline {
             sh './gradlew build'
             sh 'mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt'
           }
+          script { flag = true }
         }
-      post {
-        success {
+      }
       stage('Build Release Java Image') {
         // container name is repository/image:version
         when {
-          branch 'main'
+          expression {
+          flag == true && env.GIT_BRANCH == 'main'
         }
         steps {
           container('kaniko') {
@@ -132,10 +134,7 @@ pipeline {
           }
         }
       }
-    }
-  }
-}
-   stage('Build Feature Java Image') {
+      stage('Build Feature Java Image') {
         when {
           branch 'feature'
         }
