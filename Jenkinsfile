@@ -101,5 +101,50 @@ pipeline {
           }
         }
       }
+      stage('build a gradle project') {
+        when {
+          not {
+            branch 'playground'
+          }
+        }
+        steps {
+          container('gradle') {
+            sh './gradlew build'
+            sh 'mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt'
+          }
+        }
+      }
+      stage('Build Release Java Image') {
+        // container name is repository/image:version
+        when {
+          branch 'main'
+        }
+        steps {
+          container('kaniko') {
+            sh '''
+              echo 'FROM openjdk:8-jre' > Dockerfile
+              echo 'COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar' >> Dockerfile
+              echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile
+              mv /mnt/calculator-0.0.1-SNAPSHOT.jar .
+              /kaniko/executor --context $(pwd) --destination kishank007/calculator:1.0
+            '''
+          }
+        }
+      }
+      stage('Build Feature Java Image') {
+        when {
+          branch 'feature'
+        }
+        steps {
+          container('kaniko') {
+            sh '''
+              echo 'FROM openjdk:8-jre' > Dockerfile
+              echo 'COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar' >> Dockerfile
+              echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile
+              mv /mnt/calculator-0.0.1-SNAPSHOT.jar .
+              /kaniko/executor --context $(pwd) --destination kishank007/calculator-feature:1.0
+          }
+        }
+      } 
     }
   }      
