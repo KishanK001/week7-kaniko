@@ -60,8 +60,7 @@ pipeline {
       stage('Checkstyle Test') {
         when {
           expression {
-            return env.BRANCH_NAME == 'main'
-            return env.BRANCH_NAME == 'feature'
+            env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'feature'
           }
         }
         steps {
