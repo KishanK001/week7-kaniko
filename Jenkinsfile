@@ -1,3 +1,4 @@
+def flag = false;
 pipeline {
   agent {
     kubernetes {
@@ -107,17 +108,26 @@ pipeline {
             branch 'playground'
           }
         }
-        steps {
-          container('gradle') {
-            sh './gradlew build'
-            sh 'mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt'
+        try {
+          steps {
+            container('gradle') {
+              sh './gradlew build'
+              sh 'mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt'
+            }
+            script { flag = true }
           }
         }
+      catch (Exception e) {
+        unstable("[ERROR]: ${STAGE_NAME} failed!")
       }
+    }
       stage('Build Release Java Image') {
         // container name is repository/image:version
         when {
-          branch 'main'
+          expression {
+            flag == true &&
+            return env.GIT_BRANCH == 'main'
+          }
         }
         steps {
           container('kaniko') {
