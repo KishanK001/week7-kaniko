@@ -44,7 +44,7 @@ pipeline {
         steps { 
         git 'https://github.com/KishanK001/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
         container('gradle') { 
-            dir('Chapter08/sample1') 
+          dir('Chapter08/sample1') { 
             sh ''' chmod +x ./gradlew
               ./gradlew build 
               mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt 
@@ -52,7 +52,7 @@ pipeline {
             }
           }
         } 
- 
+      }
       stage('Build Java Image') { 
         steps {
           container('kaniko') { 
